@@ -1,13 +1,15 @@
 # Elementary RecyclerView Adapter
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.elveum/element-adapter.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.elveum%22%20AND%20a:%22element-adapter%22)
+[![Maven Central](https://img.shields.io/maven-central/v/com.elveum/element-adapter.svg?label=Maven%20Central)](https://elveum.com/sh/adapter)
+![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
+[![License: Apache 2](https://img.shields.io/github/license/romychab/element-adapter)](LICENSE)
 
 > Another one easy-to-use adapter for `RecyclerView` :rocket:
 
 __Features:__
 
 - DSL-like methods for building adapters similar to Jetpack Compose but intended for `RecyclerView`
-- bind any model object to item views by using [View Binding](https://developer.android.com/topic/libraries/view-binding)
+- no view holders; bind any model object directly to auto-generated [view bindings](https://developer.android.com/topic/libraries/view-binding)
 - support of multiple item types
 - build-in click listeners
 - the library uses `DiffUtil` under the hood for fast updating of your list
@@ -38,7 +40,7 @@ val adapter = simpleAdapter<Cat, ItemCatBinding> {
 
  recyclerView.adapter = adapter
 
- viewModel.catsLiveData.observer(viewLifecycleOwner) { list ->
+ viewModel.catsLiveData.observe(viewLifecycleOwner) { list ->
      adapter.submitList(list)
  }
 ```
@@ -104,13 +106,13 @@ sealed class ListItem {
         val id: Int,
         val fromIndex: Int,
         val toIndex: Int
-    ) : CatListItem()
+    ) : ListItem()
 
     data class Cat(
         val id: Long
         val name: String
         val description: String
-    }
+    ) : ListItem()
 
 }
 ```
@@ -138,7 +140,7 @@ val adapter = adapter<ListItem> { // <--- Base type
     }
 
     // map concrete subtype ListItem.Header to the ItemHeaderBinding:
-    addBinding<CatListItem.Header, ItemHeaderBinding> {
+    addBinding<ListItem.Header, ItemHeaderBinding> {
         areItemsSame = { oldHeader, newHeader -> oldHeader.id == newHeader.id }
         bind { header ->
             titleTextView.text = "Cats ${header.fromIndex}...${header.toIndex}"
