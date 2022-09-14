@@ -9,7 +9,7 @@ android {
     compileSdk 32
     defaultConfig {
         applicationId "com.elveum.elementadapter.app"
-        minSdk 23
+        minSdk 21
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -44,5 +44,5 @@ dependencies {
     implementation 'com.github.javafaker:javafaker:1.0.2'
     implementation 'androidx.activity:activity-ktx:1.5.1'
     implementation 'io.coil-kt:coil:2.2.0'
-    implementation 'com.elveum:element-adapter:0.1'
+    implementation project(':recyclerview-element-adapter')
 }

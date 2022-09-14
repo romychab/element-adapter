@@ -1,7 +1,7 @@
 # Elementary RecyclerView Adapter
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.elveum/element-adapter.svg?label=Maven%20Central)](https://elveum.com/sh/adapter)
-![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)
+![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)
 [![License: Apache 2](https://img.shields.io/github/license/romychab/element-adapter)](LICENSE)
 
 > Another one easy-to-use adapter for `RecyclerView` :rocket:
@@ -22,7 +22,7 @@ This library adds a few methods for easier implementation of `ListAdapter`. It r
 
 __Simple example (1 item type)__
 
-Let's image you have `Cat` model class and `R.layout.item_cat` ([View Binding](https://developer.android.com/topic/libraries/view-binding) generates `ItemCatBinding` class for this layout). The you can write the following code:
+Let's image you have `Cat` model class and `R.layout.item_cat` ([View Binding](https://developer.android.com/topic/libraries/view-binding) generates `ItemCatBinding` class for this layout). Then you can write the following code:
 
 ```kotlin
 val adapter = simpleAdapter<Cat, ItemCatBinding> {
@@ -176,10 +176,20 @@ adapter.submitList(list)
   ```
   dependencies {
       ...
-      implementation 'com.elveum:element-adapter:0.1'
+      implementation 'com.elveum:element-adapter:0.2'
   }
   ```
 
+## Changelog
+
+### v0.1
+
+- The first release
+
+### v0.2
+
+- Added `context()` extension method
+- Updated minSDK from 23 to 21
 
 ## License
 

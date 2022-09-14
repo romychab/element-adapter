@@ -8,14 +8,11 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
-import com.elveum.elementadapter.adapter
-import com.elveum.elementadapter.addBinding
+import com.elveum.elementadapter.*
 import com.elveum.elementadapter.app.databinding.ActivityMainBinding
 import com.elveum.elementadapter.app.databinding.ItemCatBinding
 import com.elveum.elementadapter.app.databinding.ItemHeaderBinding
 import com.elveum.elementadapter.app.model.Cat
-import com.elveum.elementadapter.setTintColor
-import com.elveum.elementadapter.simpleAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -62,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                 deleteImageView.onClick(viewModel::deleteCat)
                 favoriteImageView.onClick(viewModel::toggleFavorite)
                 root.onClick { cat ->
-                    Toast.makeText(this@MainActivity, "${cat.name} meow-meows", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context(), "${cat.name} meow-meows", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -89,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                 // delete the cat here
             }
             root.onClick { cat ->
-                Toast.makeText(this@MainActivity, "${cat.name} meow-meows", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context(), "${cat.name} meow-meows", Toast.LENGTH_SHORT).show()
             }
         }
     }

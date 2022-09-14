@@ -7,7 +7,7 @@ plugins {
 
 ext {
     PUBLISH_GROUP_ID = 'com.elveum'
-    PUBLISH_VERSION = '0.1'
+    PUBLISH_VERSION = '0.2'
     PUBLISH_ARTIFACT_ID = 'element-adapter'
 }
 
@@ -16,10 +16,10 @@ apply from: "${rootProject.projectDir}/publish-library.gradle"
 android {
     compileSdk 32
     defaultConfig {
-        minSdk 23
+        minSdk 21
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
