@@ -2,8 +2,9 @@ package com.elveum.elementadapter.dsl
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
 import androidx.viewbinding.ViewBinding
+import com.elveum.elementadapter.delegate.AdapterDelegate
+import com.elveum.elementadapter.delegate.AdapterDelegateImpl
 
 interface AdapterScope<T : Any>
 
@@ -28,12 +29,12 @@ class AdapterScopeImpl<T : Any> internal constructor() : AdapterScope<T> {
         )
     }
 
-    fun toAdapter(): ListAdapter<T, BindingHolder> {
+    fun toAdapterDelegate(): AdapterDelegate<T> {
         if (concreteTypeScopes.isEmpty()) {
             throw IllegalStateException("Have you added at least one addBinding { ... } / universalBinding { ... } section?")
         }
 
-        return MultiAdapter(
+        return AdapterDelegateImpl(
             concreteTypeScopes,
             ItemCallbackDelegate(concreteTypeScopes)
         )

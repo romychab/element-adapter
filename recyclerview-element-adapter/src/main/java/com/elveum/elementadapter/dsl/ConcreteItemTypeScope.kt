@@ -35,6 +35,22 @@ interface ConcreteItemTypeScope<T : Any, B : ViewBinding> {
 
     fun View.onLongClick(listener: (T) -> Boolean)
 
+    /**
+     * Setup custom view listener.
+     *
+     * Usage example:
+     *
+     * ```
+     * view.onCustomListener {
+     *     view.setOnDoubleTapListener {
+     *         val item = item() // get the data attached to this view
+     *         // do something here
+     *     }
+     * }
+     * ```
+     */
+    fun View.onCustomListener(block: CustomListenerScope<T>.() -> Unit)
+
 }
 
 internal class ConcreteItemTypeScopeImpl<T : Any, B : ViewBinding>(
@@ -67,19 +83,25 @@ internal class ConcreteItemTypeScopeImpl<T : Any, B : ViewBinding>(
     }
 
     override fun View.onClick(listener: (T) -> Unit) {
-        assertListenerCall()
-        setOnClickListener {
-            val item: T = it.tag as T
-            listener(item)
+        onCustomListener {
+            setOnClickListener {
+                listener(item())
+            }
         }
     }
 
     override fun View.onLongClick(listener: (T) -> Boolean) {
-        assertListenerCall()
-        setOnLongClickListener {
-            val item: T = it.tag as T
-            listener(item)
+        onCustomListener {
+            setOnLongClickListener {
+                listener(item())
+            }
         }
+    }
+
+    override fun View.onCustomListener(block: CustomListenerScope<T>.() -> Unit) {
+        assertListenerCall()
+        val scope = CustomListenerScopeImpl<T>(this)
+        scope.block()
     }
 
     private fun View.assertListenerCall() {

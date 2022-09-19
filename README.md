@@ -13,6 +13,7 @@ __Features:__
 - support of multiple item types
 - build-in click listeners
 - the library uses `DiffUtil` under the hood for fast updating of your list
+- support of integration either with your own adapters or with third-party adapters
 
 ![cats-screenshot](docs/screenshot.png)
 
@@ -49,7 +50,7 @@ As you see, `simpleAdapter<Item, ViewBinding>` accepts 2 types:
 - any type of your model (`Cat`)
 - an implementation of `ViewBinding` which you don't need to write because the official [View Binding](https://developer.android.com/topic/libraries/view-binding) library can do it.
 
-Then use `bind` and `listen` methods to bind your item to views and assign listeners respectively. You can access all views from you binding class inside the `bind` and the `listeners` sections by `this` reference (which can be also omitted):
+Then use `bind` and `listeners` methods to bind your item to views and assign listeners respectively. You can access all views from you binding class inside the `bind` and the `listeners` sections by `this` reference (which can be also omitted):
 
 ```kotlin
 val adapter = simpleAdapter<Cat, ItemCatBinding> {
@@ -156,6 +157,105 @@ val list: List<ListItem> = getListFromSomewhere()
 adapter.submitList(list)
 ```
 
+## Advanced usage
+
+### Custom listeners
+
+Sometimes simple clicks and long clicks are not enough for your list items.
+To integrate custom listeners, you can use `onCustomListener { ... }` method.
+
+Usage example (let's assume some view can accept a double tap listener):
+
+```kotlin
+val adapter = simpleAdapter<Cat, ItemCatBinding> {
+    ...
+    listeners {
+        someDoubleTapView.onCustomListener {
+            someDoubleTapView.setOnDoubleTapListener { // <-- this is a method of the view
+                // use item() call for getting the current item data
+                val cat = item()
+                viewModel.onDoubleTap(cat)
+            }
+        }
+    }
+}
+```
+
+### Integration with other libraries
+
+It's possible to tie together your own adapters or adapters from other third-party libraries
+with this library. You can use `adapterDelegate()` or `simpleAdapterDelegate()` calls in order
+to create a bridge between libraries.
+
+For example, you can tie the `PagingDataAdapter` (see [Paging Library V3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview))
+and this library.
+
+Usage example:
+
+1. Implement a subclass of `PagingDataAdapter` (add `AdapterDelegate` to the constructor):
+
+   ```kotlin
+   class PagingDataAdapterBridge<T : Any>(
+       private val delegate: AdapterDelegate<T>
+   ) : PagingDataAdapter<T, BindingHolder>(
+       delegate.itemCallback()
+   ){
+
+       override fun onBindViewHolder(holder: BindingHolder, position: Int) {
+           // please note, NULL values are not supported!
+           delegate.onBindViewHolder(holder, getItem(position)!!)
+       }
+
+       override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingHolder {
+           return delegate.onCreateViewHolder(parent, viewType)
+       }
+
+       override fun getItemViewType(position: Int): Int {
+           // please note, NULL values are not supported!
+           return delegate.getItemViewType(getItem(position)!!)
+       }
+
+   }
+   ```
+
+2. Write a method for creating instances of `PagingDataAdapter`:
+
+   ```kotlin
+   inline fun <reified T : Any, reified B : ViewBinding> pagingAdapter(
+       noinline block: ConcreteItemTypeScope<T, B>.() -> Unit
+   ): PagingDataAdapter<T, BindingHolder> {
+       val delegate = simpleAdapterDelegate(block)
+       return PagingDataAdapterBridge(delegate)
+   }
+   ```
+
+3. Now you can use `pagingAdapter { ... }` call for creating instances of `PagingDataAdapter` from
+   [Paging Library V3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview)
+
+   ```kotlin
+   val adapter = pagingAdapter<Cat, ItemCatBinding> {
+       areItemsSame = { oldCat, newCat -> oldCat.id == newCat.id }
+       bind { cat ->
+           catNameTextView.text = cat.name
+           catDescriptionTextView.text = cat.description
+       }
+       listeners {
+           root.onClick { cat ->
+               Toast.makeText(context(), "${cat.name} meow-meows", Toast.LENGTH_SHORT).show()
+           }
+       }
+   }
+
+   recyclerView.adapter = adapter
+
+   lifecycleScope.launch {
+       viewModel.catsPagingDataFlow.collectLatest {
+           adapter.submitData(it)
+       }
+   }
+
+   ```
+
 ## Installation
 
 - Add [View Binding](https://developer.android.com/topic/libraries/view-binding) to
@@ -176,20 +276,28 @@ adapter.submitList(list)
   ```
   dependencies {
       ...
-      implementation 'com.elveum:element-adapter:0.2'
+      implementation 'com.elveum:element-adapter:0.3'
   }
   ```
 
 ## Changelog
 
-### v0.1
+### v0.3
 
-- The first release
+- Added a couple extension method for getting resources to the `bind` and `listeners` block
+- Added `onCustomListener { ... }` method for assigning custom listeners
+- Added `adapterDelegate { ... }` and `simpleAdapterDelegate { ... }` methods
+  for easier integration with third-party adapters
+
 
 ### v0.2
 
 - Added `context()` extension method
 - Updated minSDK from 23 to 21
+
+### v0.1
+
+- The first release
 
 ## License
 

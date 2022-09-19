@@ -2,6 +2,7 @@ package com.elveum.elementadapter
 
 import androidx.recyclerview.widget.ListAdapter
 import androidx.viewbinding.ViewBinding
+import com.elveum.elementadapter.delegate.adapterDelegate
 import com.elveum.elementadapter.dsl.*
 import com.elveum.elementadapter.dsl.AdapterScopeImpl
 
@@ -61,9 +62,7 @@ typealias SimpleBindingAdapter<T> = ListAdapter<T, BindingHolder>
  * ```
  */
 fun <T : Any> adapter(block: AdapterScope<T>.() -> Unit): SimpleBindingAdapter<T> {
-    val adapterScope = AdapterScopeImpl<T>()
-    adapterScope.block()
-    return adapterScope.toAdapter()
+    return MultiAdapter(adapterDelegate(block))
 }
 
 /**
