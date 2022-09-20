@@ -23,7 +23,7 @@ fun <B : ViewBinding> B.context(): Context = this.root.context
 fun <B : ViewBinding> B.resources(): Resources = context().resources
 
 fun <B : ViewBinding> B.getString(@StringRes stringRes: Int, vararg formatArgs: Any?): String {
-    return context().getString(stringRes, formatArgs)
+    return context().getString(stringRes, *formatArgs)
 }
 
 fun <B : ViewBinding> B.getColor(@ColorRes colorRes: Int): Int {

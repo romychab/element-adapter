@@ -276,7 +276,7 @@ Usage example:
   ```
   dependencies {
       ...
-      implementation 'com.elveum:element-adapter:0.3'
+      implementation 'com.elveum:element-adapter:0.3.1'
   }
   ```
 
