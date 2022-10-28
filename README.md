@@ -8,7 +8,7 @@
 
 __Features:__
 
-- DSL-like methods for building adapters similar to Jetpack Compose but intended for `RecyclerView`
+- DSL-like methods for building adapters similar to Jetpack Compose but designed for `RecyclerView`
 - no view holders; bind any model object directly to auto-generated [view bindings](https://developer.android.com/topic/libraries/view-binding)
 - support of multiple item types
 - build-in click listeners
@@ -19,7 +19,7 @@ __Features:__
 
 ## Usage example
 
-This library adds a few methods for easier implementation of `ListAdapter`. It relies on [View Binding](https://developer.android.com/topic/libraries/view-binding) so you don't need to create view holders.
+This library adds a couple of methods for easier implementation of `ListAdapter`. It relies on [View Binding](https://developer.android.com/topic/libraries/view-binding) so you don't need to create view holders.
 
 __Simple example (1 item type)__
 
@@ -203,7 +203,8 @@ Usage example:
 
        override fun onBindViewHolder(holder: BindingHolder, position: Int) {
            // please note, NULL values are not supported!
-           delegate.onBindViewHolder(holder, getItem(position)!!)
+           val item = getItem(position) ?: return
+           delegate.onBindViewHolder(holder, item)
        }
 
        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingHolder {
@@ -212,7 +213,8 @@ Usage example:
 
        override fun getItemViewType(position: Int): Int {
            // please note, NULL values are not supported!
-           return delegate.getItemViewType(getItem(position)!!)
+           val item = getItem(position) ?: return 0
+           return delegate.getItemViewType(item)
        }
 
    }
@@ -284,11 +286,10 @@ Usage example:
 
 ### v0.3
 
-- Added a couple extension method for getting resources to the `bind` and `listeners` block
+- Added a couple of extension methods for getting resources to the `bind` and `listeners` block
 - Added `onCustomListener { ... }` method for assigning custom listeners
 - Added `adapterDelegate { ... }` and `simpleAdapterDelegate { ... }` methods
   for easier integration with third-party adapters
-
 
 ### v0.2
 

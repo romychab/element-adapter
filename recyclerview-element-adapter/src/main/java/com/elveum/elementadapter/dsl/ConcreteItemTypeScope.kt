@@ -27,7 +27,7 @@ interface ConcreteItemTypeScope<T : Any, B : ViewBinding> {
 
     /**
      * Start a listeners section where you can assign click listeners. Now
-     * [onClick] and [onLongClick] are supported.
+     * [onClick], [onLongClick] and [onCustomListener] are supported.
      */
     fun listeners(block: B.() -> Unit)
 

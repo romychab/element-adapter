@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val adapter = createCatsAdapter()
-        (binding.catsRecyclerView.itemAnimator as? DefaultItemAnimator)!!.supportsChangeAnimations = false
+        (binding.catsRecyclerView.itemAnimator as? DefaultItemAnimator)?.supportsChangeAnimations = false
         binding.catsRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.catsRecyclerView.adapter = adapter
         viewModel.catsLiveData.observe(this, adapter::submitList)
