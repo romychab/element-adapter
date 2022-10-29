@@ -162,7 +162,7 @@ adapter.submitList(list)
 
 ### Payloads
 
-Sometimes you need to implement some custom animations in your list or update only
+Sometimes you need to implement custom animations in your list or update only
 specific views. In this case you can use *payloads*.
 
 1. Specify `changePayload` property:
@@ -171,6 +171,7 @@ specific views. In this case you can use *payloads*.
 2. Then use `bindWithPayload` instead of `bind`. The `bindWithPayload` block sends you 2 arguments
    instead of one: the second argument is a payload list which is exactly the same as in a typical
    `RecyclerView.Adapter.onBindViewHolder` method:
+
    ```kotlin
        val adapter = simpleAdapter<Cat, ItemCatBinding> {
            bindWithPayload { cat, payloads ->
@@ -180,6 +181,7 @@ specific views. In this case you can use *payloads*.
        }
    ```
 3. Usage example with `adapter` (see `example-add` module in the sources for more details):
+
    ```kotlin
    val catsAdapter = adapter<CatListItem> {
         addBinding<CatListItem.Cat, ItemCatBinding> {
@@ -333,7 +335,7 @@ Usage example:
   ```
   dependencies {
       ...
-      implementation 'com.elveum:element-adapter:0.3.1'
+      implementation 'com.elveum:element-adapter:0.4'
   }
   ```
 
