@@ -22,8 +22,15 @@ internal class MultiAdapter<T : Any>(
         return adapterDelegate.onCreateViewHolder(parent, viewType)
     }
 
+    override fun onBindViewHolder(
+        holder: BindingHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        adapterDelegate.onBindViewHolder(holder, getItem(position), payloads)
+    }
+
     override fun onBindViewHolder(holder: BindingHolder, position: Int) {
-        adapterDelegate.onBindViewHolder(holder, getItem(position))
     }
 
 }

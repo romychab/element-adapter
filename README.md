@@ -14,6 +14,7 @@ __Features:__
 - build-in click listeners
 - the library uses `DiffUtil` under the hood for fast updating of your list
 - support of integration either with your own adapters or with third-party adapters
+- upd: now payloads are supported starting from v0.4
 
 ![cats-screenshot](docs/screenshot.png)
 
@@ -67,7 +68,7 @@ It's highly recommended to use a separate `listeners` section to assign click an
 
 ```kotlin
 val adapter = simpleAdapter<Cat, ItemCatBinding> {
-    ...
+    // ...
     listeners {
         // onClick for clicks
         deleteButton.onClick { cat ->
@@ -110,8 +111,8 @@ sealed class ListItem {
     ) : ListItem()
 
     data class Cat(
-        val id: Long
-        val name: String
+        val id: Long,
+        val name: String,
         val description: String
     ) : ListItem()
 
@@ -159,6 +160,60 @@ adapter.submitList(list)
 
 ## Advanced usage
 
+### Payloads
+
+Sometimes you need to implement some custom animations in your list or update only
+specific views. In this case you can use *payloads*.
+
+1. Specify `changePayload` property:
+   - in the `addBinding` block (for `adapter` method)
+   - directly in the `simpleAdapter` block
+2. Then use `bindWithPayload` instead of `bind`. The `bindWithPayload` block sends you 2 arguments
+   instead of one: the second argument is a payload list which is exactly the same as in a typical
+   `RecyclerView.Adapter.onBindViewHolder` method:
+   ```kotlin
+       val adapter = simpleAdapter<Cat, ItemCatBinding> {
+           bindWithPayload { cat, payloads ->
+               // draw cat
+               // use payloads
+           }
+       }
+   ```
+3. Usage example with `adapter` (see `example-add` module in the sources for more details):
+   ```kotlin
+   val catsAdapter = adapter<CatListItem> {
+        addBinding<CatListItem.Cat, ItemCatBinding> {
+   
+            // ... areItemsSame, areContentsSame here ...
+   
+            // payloads callback:
+            changePayload = { oldCat, newCat ->
+                if (!oldCat.isFavorite && newCat.isFavorite) {
+                    FAVORITE_FLAG_CHANGED
+                } else {
+                    NO_ANIMATION
+                }
+            }
+
+            // bind with payloads
+            bindWithPayloads { cat, payloads ->
+   
+                // ... render the cat here ...
+   
+                // if the payload list contains FAVORITE_FLAG_CHANGED:
+                if (payloads.any { it == FAVORITE_FLAG_CHANGED }) {
+                    // render changes with animation
+                    favoriteImageView.startAnimation(buildMyAwesomeAnimation())
+                }
+            }
+
+        }
+
+        // ... bind some other item types here
+
+    }
+   ```
+
 ### Custom listeners
 
 Sometimes simple clicks and long clicks are not enough for your list items.
@@ -168,7 +223,7 @@ Usage example (let's assume some view can accept a double tap listener):
 
 ```kotlin
 val adapter = simpleAdapter<Cat, ItemCatBinding> {
-    ...
+    // ...
     listeners {
         someDoubleTapView.onCustomListener {
             someDoubleTapView.setOnDoubleTapListener { // <-- this is a method of the view
@@ -201,10 +256,10 @@ Usage example:
        delegate.itemCallback()
    ){
 
-       override fun onBindViewHolder(holder: BindingHolder, position: Int) {
+       override fun onBindViewHolder(holder: BindingHolder, position: Int, payloads: List<Any>) {
            // please note, NULL values are not supported!
            val item = getItem(position) ?: return
-           delegate.onBindViewHolder(holder, item)
+           delegate.onBindViewHolder(holder, item, payloads)
        }
 
        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingHolder {
@@ -283,6 +338,10 @@ Usage example:
   ```
 
 ## Changelog
+
+### v0.4
+
+- Added support of RecyclerView payloads
 
 ### v0.3
 
