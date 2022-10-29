@@ -1,6 +1,9 @@
 package com.elveum.elementadapter.app
 
 import android.os.Bundle
+import android.view.animation.Animation
+import android.view.animation.AnimationSet
+import android.view.animation.ScaleAnimation
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val adapter = createCatsAdapter()
-        (binding.catsRecyclerView.itemAnimator as? DefaultItemAnimator)!!.supportsChangeAnimations = false
+        (binding.catsRecyclerView.itemAnimator as? DefaultItemAnimator)?.supportsChangeAnimations = false
         binding.catsRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.catsRecyclerView.adapter = adapter
         viewModel.catsLiveData.observe(this, adapter::submitList)
@@ -34,11 +37,17 @@ class MainActivity : AppCompatActivity() {
 
     // Example of adapter { ... } usage
     private fun createCatsAdapter() = adapter<CatListItem> {
-
         addBinding<CatListItem.Cat, ItemCatBinding> {
             areItemsSame = { oldCat, newCat -> oldCat.id == newCat.id }
+            changePayload = { oldCat, newCat ->
+                if (!oldCat.isFavorite && newCat.isFavorite) {
+                    FAVORITE_FLAG_CHANGED
+                } else {
+                    NO_ANIMATION
+                }
+            }
 
-            bind { cat ->
+            bindWithPayloads { cat, payloads ->
                 catNameTextView.text = cat.name
                 catDescriptionTextView.text = cat.description
                 catImageView.load(cat.photoUrl) {
@@ -53,6 +62,9 @@ class MainActivity : AppCompatActivity() {
                     if (cat.isFavorite) R.color.highlighted_action
                     else R.color.action
                 )
+                if (payloads.any { it == FAVORITE_FLAG_CHANGED }) {
+                    favoriteImageView.startAnimation(animationForFavoriteFlag)
+                }
             }
 
             listeners {
@@ -91,4 +103,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val animationForFavoriteFlag by lazy(LazyThreadSafetyMode.NONE) {
+        val toSmall = ScaleAnimation(1f, 0.8f, 1f, 0.8f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+        val smallToLarge = ScaleAnimation(1f, 1.5f, 1f, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+        val largeToNormal = ScaleAnimation(1f, 0.83f, 1f, 0.83f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+        val animationSet = AnimationSet(true).apply {
+            addAnimation(toSmall)
+            addAnimation(smallToLarge)
+            addAnimation(largeToNormal)
+        }
+        animationSet.animations.forEachIndexed { index, animation ->
+            animation.duration = 100L
+            animation.startOffset = index * 100L
+        }
+        animationSet
+    }
+
+    private companion object {
+        val FAVORITE_FLAG_CHANGED = Any()
+        val NO_ANIMATION = Any()
+    }
 }

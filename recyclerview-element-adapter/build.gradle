@@ -7,7 +7,7 @@ plugins {
 
 ext {
     PUBLISH_GROUP_ID = 'com.elveum'
-    PUBLISH_VERSION = '0.3.1'
+    PUBLISH_VERSION = '0.4'
     PUBLISH_ARTIFACT_ID = 'element-adapter'
 }
 
@@ -18,8 +18,8 @@ android {
     defaultConfig {
         minSdk 21
         targetSdk 32
-        versionCode 4
-        versionName "0.3.1"
+        versionCode 5
+        versionName "0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }

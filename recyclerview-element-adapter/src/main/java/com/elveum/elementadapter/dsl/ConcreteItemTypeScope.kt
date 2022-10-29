@@ -20,10 +20,24 @@ interface ConcreteItemTypeScope<T : Any, B : ViewBinding> {
     var areContentsSame: CompareItemCallback<T>
 
     /**
+     * A callback for creating payloads which indicate the concrete difference
+     * between an old item and a new item. May be useful for animation,
+     * optimizations, etc.
+     */
+    var changePayload: ChangePayloadCallback<T>
+
+    /**
      * Start a binding section where you can assign data from your model
      * list item to the view binding.
      */
     fun bind(block: B.(T) -> Unit)
+
+    /**
+     * Start a binding section where you can:
+     * 1) assign data from your model list item to the view binding.
+     * 2) use RecyclerView payloads for updating/animating views
+     */
+    fun bindWithPayloads(block: B.(item: T, payloads: List<Any>) -> Unit)
 
     /**
      * Start a listeners section where you can assign click listeners. Now
@@ -64,17 +78,27 @@ internal class ConcreteItemTypeScopeImpl<T : Any, B : ViewBinding>(
     private val defaultCompareContentsCallback: CompareItemCallback<T> =
         { oldItem, newItem -> oldItem == newItem }
 
+    private val defaultChangePayloadCallback: ChangePayloadCallback<T> =
+        { _, _ -> null }
+
 
     override var areContentsSame: CompareItemCallback<T> = defaultCompareContentsCallback
     override var areItemsSame: CompareItemCallback<T> = defaultCompareItemsSameCallback
+    override var changePayload: ChangePayloadCallback<T> = defaultChangePayloadCallback
 
-    var bindBlock: (B.(T) -> Unit)? = null
+    var bindBlock: (B.(item: T, payloads: List<Any>) -> Unit)? = null
     var listenersBlock: (B.() -> Unit)? = null
     var uponCreating: Boolean = false
 
     val viewsWithListeners = mutableSetOf<Int>()
 
     override fun bind(block: B.(T) -> Unit) {
+        this.bindBlock = { item, _ ->
+            block(item)
+        }
+    }
+
+    override fun bindWithPayloads(block: B.(item: T, payloads: List<Any>) -> Unit) {
         this.bindBlock = block
     }
 

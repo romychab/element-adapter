@@ -5,6 +5,8 @@ import androidx.viewbinding.ViewBinding
 
 typealias CompareItemCallback<T> = (oldItem: T, newItem: T) -> Boolean
 
+typealias ChangePayloadCallback<T> = (oldItem: T, newItem: T) -> Any?
+
 internal class ItemCallbackDelegate<T : Any>(
     private val concreteItemTypeScopes: List<ConcreteItemTypeScopeImpl<T, ViewBinding>>
 ) : DiffUtil.ItemCallback<T>() {
@@ -21,6 +23,13 @@ internal class ItemCallbackDelegate<T : Any>(
         val newScope = findScope(newItem)
         if (oldScope !== newScope) return false
         return newScope.areContentsSame(oldItem, newItem)
+    }
+
+    override fun getChangePayload(oldItem: T, newItem: T): Any? {
+        val oldScope = findScope(oldItem)
+        val newScope = findScope(newItem)
+        if (oldScope !== newScope) return null
+        return newScope.changePayload(oldItem, newItem)
     }
 
     private fun findScope(item: T): ConcreteItemTypeScopeImpl<T, ViewBinding> {

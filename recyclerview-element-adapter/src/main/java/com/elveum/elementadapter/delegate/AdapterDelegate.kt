@@ -30,7 +30,7 @@ interface AdapterDelegate<T : Any> {
     /**
      * Call this method from [RecyclerView.Adapter.onBindViewHolder]
      */
-    fun onBindViewHolder(holder: BindingHolder, item: T)
+    fun onBindViewHolder(holder: BindingHolder, item: T, payloads: List<Any> = emptyList())
 
 }
 
@@ -65,13 +65,13 @@ internal class AdapterDelegateImpl<T : Any>(
         return BindingHolder(viewBinding)
     }
 
-    override fun onBindViewHolder(holder: BindingHolder, item: T) {
+    override fun onBindViewHolder(holder: BindingHolder, item: T, payloads: List<Any>) {
         holder.binding.root.tag = item
         val concreteTypeScope = concreteItemTypeScopesImpl.first { it.predicate(item) }
         concreteTypeScope.viewsWithListeners.forEach {
             holder.binding.root.findViewById<View>(it)?.tag = item
         }
-        concreteTypeScope.bindBlock?.invoke(holder.binding, item)
+        concreteTypeScope.bindBlock?.invoke(holder.binding, item, payloads)
     }
 
 }
