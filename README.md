@@ -215,6 +215,24 @@ specific views. In this case you can use *payloads*.
 
     }
    ```
+   
+### Stable IDs
+
+Sometimes you might need to support stable ids in recycler view for better optimization and cases like selection or
+drag and drop. In that case you can use property `stableId`
+
+```kotlin
+addBinding<CatListItem.Cat, ItemCatBinding> {
+    ...
+    stableId = { cat ->
+        cat.id
+    }
+    ...
+}
+```
+
+NOTE: If at least one `ConcreteItemTypeScope` implements `stableId` all other items in the same `AdapterScope` have to implement it either 
+in order to support stable ids
 
 ### Custom listeners
 
