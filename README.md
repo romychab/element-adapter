@@ -160,6 +160,15 @@ adapter.submitList(list)
 
 ## Advanced usage
 
+### Multi-choice / single-choice
+
+We recommend to implement multi-choice, single-choice, expand/collapse logic and so on
+in the view-model. And then just submit the result list to the adapter via 
+either `LiveData` or `StateFlow`. 
+
+But in case if you don't care about this, you can check the example of simple multi-choice 
+implementation in the example app module (see [SimpleMultiChoiceActivity](example-app/src/main/java/com/elveum/elementadapter/app/SimpleMultiChoiceActivity.kt)).
+
 ### Payloads
 
 Sometimes you need to implement custom animations in your list or update only
