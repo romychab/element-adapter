@@ -7,6 +7,8 @@ typealias CompareItemCallback<T> = (oldItem: T, newItem: T) -> Boolean
 
 typealias ChangePayloadCallback<T> = (oldItem: T, newItem: T) -> Any?
 
+typealias GetStableIdCallback<T> = (item: T) -> Long
+
 internal class ItemCallbackDelegate<T : Any>(
     private val concreteItemTypeScopes: List<ConcreteItemTypeScopeImpl<T, ViewBinding>>
 ) : DiffUtil.ItemCallback<T>() {

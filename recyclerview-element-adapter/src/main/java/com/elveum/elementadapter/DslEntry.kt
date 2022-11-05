@@ -62,7 +62,12 @@ typealias SimpleBindingAdapter<T> = ListAdapter<T, BindingHolder>
  * ```
  */
 fun <T : Any> adapter(block: AdapterScope<T>.() -> Unit): SimpleBindingAdapter<T> {
-    return MultiAdapter(adapterDelegate(block))
+    val delegate = adapterDelegate(block)
+    val adapter = MultiAdapter(delegate)
+    if (delegate.hasStableIds()) {
+        adapter.setHasStableIds(true)
+    }
+    return adapter
 }
 
 /**

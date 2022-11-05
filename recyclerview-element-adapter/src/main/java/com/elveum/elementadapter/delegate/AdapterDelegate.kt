@@ -32,6 +32,16 @@ interface AdapterDelegate<T : Any> {
      */
     fun onBindViewHolder(holder: BindingHolder, item: T, payloads: List<Any> = emptyList())
 
+    /**
+     * Call this method from [RecyclerView.Adapter.getItemId]
+     */
+    fun getItemId(item: T): Long
+
+    /**
+     * This method is needed to check whether [RecyclerView.Adapter.setHasStableIds] needs
+     * to be called
+     */
+    fun hasStableIds(): Boolean
 }
 
 internal class AdapterDelegateImpl<T : Any>(
@@ -74,4 +84,12 @@ internal class AdapterDelegateImpl<T : Any>(
         concreteTypeScope.bindBlock?.invoke(holder.binding, item, payloads)
     }
 
+    override fun getItemId(item: T): Long {
+        val concreteTypeScope = concreteItemTypeScopesImpl.first { it.predicate(item) }
+        return concreteTypeScope.stableId(item)
+    }
+
+    override fun hasStableIds(): Boolean {
+        return concreteItemTypeScopesImpl.any { it.hasStableIds }
+    }
 }

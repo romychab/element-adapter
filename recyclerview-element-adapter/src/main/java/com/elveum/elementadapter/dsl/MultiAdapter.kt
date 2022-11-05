@@ -33,5 +33,12 @@ internal class MultiAdapter<T : Any>(
     override fun onBindViewHolder(holder: BindingHolder, position: Int) {
     }
 
+    override fun getItemId(position: Int): Long {
+        val id = adapterDelegate.getItemId(getItem(position))
+        if (hasStableIds() && id == RecyclerView.NO_ID) {
+            throw IllegalStateException("stableId { ... } block is not implemented in addBinding<${getItem(position)::class.java.canonicalName}, YOUR_BINDING> { ... } section")
+        }
+        return id
+    }
 }
 

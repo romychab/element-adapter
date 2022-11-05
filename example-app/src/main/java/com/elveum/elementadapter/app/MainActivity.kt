@@ -46,6 +46,9 @@ class MainActivity : AppCompatActivity() {
                     NO_ANIMATION
                 }
             }
+            stableId = { cat ->
+                cat.id
+            }
 
             bindWithPayloads { cat, payloads ->
                 catNameTextView.text = cat.name
@@ -78,6 +81,9 @@ class MainActivity : AppCompatActivity() {
 
         addBinding<CatListItem.Header, ItemHeaderBinding> {
             areItemsSame = { oldHeader, newHeader -> oldHeader.headerId == newHeader.headerId }
+            stableId = { header ->
+                header.headerId.toLong()
+            }
             bind { header ->
                 titleTextView.text = getString(R.string.cats, header.fromIndex, header.toIndex)
             }

@@ -3,6 +3,7 @@ package com.elveum.elementadapter.dsl
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
 interface ConcreteItemTypeScope<T : Any, B : ViewBinding> {
@@ -25,6 +26,14 @@ interface ConcreteItemTypeScope<T : Any, B : ViewBinding> {
      * optimizations, etc.
      */
     var changePayload: ChangePayloadCallback<T>
+
+    /**
+     * A callback for getting stable item id. May be useful for optimizations,
+     * selection, drag & dropping etc
+     * NOTE: If at least one [ConcreteItemTypeScope] implements [stableId] all other items
+     * in the same [AdapterScope] have to implement it either in order to support stable ids
+     */
+    var stableId: GetStableIdCallback<T>
 
     /**
      * Start a binding section where you can assign data from your model
@@ -81,10 +90,15 @@ internal class ConcreteItemTypeScopeImpl<T : Any, B : ViewBinding>(
     private val defaultChangePayloadCallback: ChangePayloadCallback<T> =
         { _, _ -> null }
 
+    private val defaultStableIdCallback: GetStableIdCallback<T> =
+        { RecyclerView.NO_ID }
 
     override var areContentsSame: CompareItemCallback<T> = defaultCompareContentsCallback
     override var areItemsSame: CompareItemCallback<T> = defaultCompareItemsSameCallback
     override var changePayload: ChangePayloadCallback<T> = defaultChangePayloadCallback
+    override var stableId: GetStableIdCallback<T> = defaultStableIdCallback
+
+    val hasStableIds get() = stableId != defaultStableIdCallback
 
     var bindBlock: (B.(item: T, payloads: List<Any>) -> Unit)? = null
     var listenersBlock: (B.() -> Unit)? = null
