@@ -11,4 +11,5 @@
     <color name="highlighted_action">@color/purple_700</color>
     <color name="action">#ababab</color>
 
+    <color name="selected_background">#223700B3</color>
 </resources>

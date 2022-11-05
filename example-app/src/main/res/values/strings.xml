@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Cats 😼</string>
     <string name="cats">Cats: %1$d … %2$d</string>
+
+    <string name="cats_activity">@string/app_name</string>
+    <string name="multi_choice_activity">Multi Choice</string>
+
+    <string name="total_selected">Total selected: %1$d</string>
 </resources>
