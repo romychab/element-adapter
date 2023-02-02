@@ -160,6 +160,56 @@ adapter.submitList(list)
 
 ## Advanced usage
 
+### Working with indexes
+
+You can take into account an element's index within `bind { ... }` block and
+within event callbacks such as `onClick { ... }` and so on.
+
+:warning: Please note if you want to render items differently depending on element index then
+you need to specify `areContentsSame` callback which should take into account index changes.
+
+For example:
+
+```kotlin
+val adapter = simpleAdapter<Cat, ItemCatBinding> {
+    areContentsSame = { oldCat, newCat ->
+      // here you should pass an argument to the index() because
+      // indexes may be different for old and new items.
+      oldCat == newCat && index(oldCat) == index(newCat)
+    }
+    bind { item ->
+        // here index() is called without args because it refers to the current item being rendered
+        root.background = if (index() % 2 == 0) Color.GRAY else Color.WHITE
+        // ... render other properties
+    }
+}
+```
+
+Referencing to indexes within event callbacks is very simple (for this case you don't
+need to check indexes in `areContentsSame`):
+
+```kotlin
+val adapter = simpleAdapter<Cat, ItemCatBinding> {
+    areContentsSame = { oldCat, newCat -> oldCat == newCat }
+    bind {
+        // ... render item
+    }
+    listeners {
+        button.onClick {
+            val elementIndex = index()
+            Toast.makeText(context(), "Clicked on index: ${elementIndex}", Toast.LENGTH_SHORT).show()
+        }
+        customView.onCustomListener {
+            customView.setOnMyCustomListener {
+                val elementIndex = index()
+                Toast.makeText(context(), "Custom event on index: ${elementIndex}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
+```
+
+
 ### Multi-choice / single-choice
 
 We recommend to implement multi-choice, single-choice, expand/collapse logic and so on
@@ -349,6 +399,18 @@ Usage example:
   ```
 
 ## Changelog
+
+### v0.5
+
+- Added `index()` method which can be called within:
+  - `bind { ... }` block
+  - `onClick { ... }`, `onLongClick { ... }` blocks
+  - `onCustomListener { view.onMyListener { ... } }` block
+- Added `index(item)` method to `areContentsSame { ... }`,
+  `areItemsSame { ... }` and `changePayload { ... }` blocks. For these blocks
+  you should call `index()` with arg because there is a need to specify for
+  which item (`oldItem` or `newItem`) you want to get an index.
+
 
 ### v0.4
 

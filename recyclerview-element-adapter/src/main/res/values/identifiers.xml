@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="element_index_tag" type="id" />
+    <item name="element_entity_tag" type="id" />
+
+</resources>

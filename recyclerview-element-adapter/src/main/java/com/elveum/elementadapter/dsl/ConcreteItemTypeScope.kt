@@ -45,9 +45,9 @@ interface ConcreteItemTypeScope<T : Any, B : ViewBinding> {
      */
     fun listeners(block: B.() -> Unit)
 
-    fun View.onClick(listener: (T) -> Unit)
+    fun View.onClick(listener: CustomListenerIndexScope.(T) -> Unit)
 
-    fun View.onLongClick(listener: (T) -> Boolean)
+    fun View.onLongClick(listener: CustomListenerIndexScope.(T) -> Boolean)
 
     /**
      * Setup custom view listener.
@@ -64,6 +64,16 @@ interface ConcreteItemTypeScope<T : Any, B : ViewBinding> {
      * ```
      */
     fun View.onCustomListener(block: CustomListenerScope<T>.() -> Unit)
+
+    /**
+     * Get the index of an element being rendered.
+     * This method can be called within bind { ... } block.
+     *
+     * Please note that you need to customize `areContentsSame` block and
+     * take into account index changes there if you decide to use this method
+     * in your `bind { ... }` blocks.
+     */
+    fun index(): Int
 
 }
 
@@ -89,6 +99,7 @@ internal class ConcreteItemTypeScopeImpl<T : Any, B : ViewBinding>(
     var bindBlock: (B.(item: T, payloads: List<Any>) -> Unit)? = null
     var listenersBlock: (B.() -> Unit)? = null
     var uponCreating: Boolean = false
+    var currentIndex: Int? = null
 
     val viewsWithListeners = mutableSetOf<Int>()
 
@@ -106,7 +117,11 @@ internal class ConcreteItemTypeScopeImpl<T : Any, B : ViewBinding>(
         this.listenersBlock = block
     }
 
-    override fun View.onClick(listener: (T) -> Unit) {
+    override fun index(): Int {
+        return currentIndex ?: throw IllegalStateException("index() can be called only within bind { ... } block")
+    }
+
+    override fun View.onClick(listener: CustomListenerIndexScope.(T) -> Unit) {
         onCustomListener {
             setOnClickListener {
                 listener(item())
@@ -114,7 +129,7 @@ internal class ConcreteItemTypeScopeImpl<T : Any, B : ViewBinding>(
         }
     }
 
-    override fun View.onLongClick(listener: (T) -> Boolean) {
+    override fun View.onLongClick(listener: CustomListenerIndexScope.(T) -> Boolean) {
         onCustomListener {
             setOnLongClickListener {
                 listener(item())

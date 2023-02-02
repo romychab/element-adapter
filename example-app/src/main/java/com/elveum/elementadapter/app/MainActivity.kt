@@ -68,10 +68,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             listeners {
-                deleteImageView.onClick(viewModel::deleteCat)
-                favoriteImageView.onClick(viewModel::toggleFavorite)
+                deleteImageView.onClick { viewModel.deleteCat(it) }
+                favoriteImageView.onClick { viewModel.toggleFavorite(it) }
                 root.onClick { cat ->
-                    Toast.makeText(context(), "${cat.name} meow-meows", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context(), "${cat.name} meow-meows, index: ${index()}", Toast.LENGTH_SHORT).show()
                 }
             }
         }

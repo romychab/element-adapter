@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.elveum.elementadapter.R
 import com.elveum.elementadapter.dsl.BindingHolder
 import com.elveum.elementadapter.dsl.ConcreteItemTypeScopeImpl
+import com.elveum.elementadapter.dsl.ElementWithIndex
 
 interface AdapterDelegate<T : Any> {
 
@@ -15,7 +17,7 @@ interface AdapterDelegate<T : Any> {
      * Use the [DiffUtil.ItemCallback] returned by this method in your own
      * adapter.
      */
-    fun itemCallback(): DiffUtil.ItemCallback<T>
+    fun itemCallback(): DiffUtil.ItemCallback<ElementWithIndex<T>>
 
     /**
      * Call this method from [RecyclerView.Adapter.getItemViewType]
@@ -30,16 +32,16 @@ interface AdapterDelegate<T : Any> {
     /**
      * Call this method from [RecyclerView.Adapter.onBindViewHolder]
      */
-    fun onBindViewHolder(holder: BindingHolder, item: T, payloads: List<Any> = emptyList())
+    fun onBindViewHolder(holder: BindingHolder, position: Int, item: T, payloads: List<Any> = emptyList())
 
 }
 
 internal class AdapterDelegateImpl<T : Any>(
     private val concreteItemTypeScopesImpl: List<ConcreteItemTypeScopeImpl<T, ViewBinding>>,
-    private val itemCallback: DiffUtil.ItemCallback<T>
+    private val itemCallback: DiffUtil.ItemCallback<ElementWithIndex<T>>
 ) : AdapterDelegate<T> {
 
-    override fun itemCallback(): DiffUtil.ItemCallback<T> {
+    override fun itemCallback(): DiffUtil.ItemCallback<ElementWithIndex<T>> {
         return itemCallback
     }
 
@@ -65,13 +67,17 @@ internal class AdapterDelegateImpl<T : Any>(
         return BindingHolder(viewBinding)
     }
 
-    override fun onBindViewHolder(holder: BindingHolder, item: T, payloads: List<Any>) {
-        holder.binding.root.tag = item
+    override fun onBindViewHolder(holder: BindingHolder, position: Int, item: T, payloads: List<Any>) {
+        holder.binding.root.setTag(R.id.element_entity_tag, item)
+        holder.binding.root.setTag(R.id.element_index_tag, position)
         val concreteTypeScope = concreteItemTypeScopesImpl.first { it.predicate(item) }
         concreteTypeScope.viewsWithListeners.forEach {
-            holder.binding.root.findViewById<View>(it)?.tag = item
+            holder.binding.root.findViewById<View>(it)?.setTag(R.id.element_entity_tag, item)
+            holder.binding.root.findViewById<View>(it)?.setTag(R.id.element_index_tag, position)
         }
+        concreteTypeScope.currentIndex = position
         concreteTypeScope.bindBlock?.invoke(holder.binding, item, payloads)
+        concreteTypeScope.currentIndex = null
     }
 
 }

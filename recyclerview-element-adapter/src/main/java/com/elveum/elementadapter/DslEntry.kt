@@ -7,7 +7,7 @@ import com.elveum.elementadapter.dsl.*
 import com.elveum.elementadapter.dsl.AdapterScopeImpl
 
 
-typealias SimpleBindingAdapter<T> = ListAdapter<T, BindingHolder>
+typealias SimpleBindingAdapter<T> = ElementListAdapter<T>
 
 /**
  * Crate an instance of a [ListAdapter] for the specified base type [T].

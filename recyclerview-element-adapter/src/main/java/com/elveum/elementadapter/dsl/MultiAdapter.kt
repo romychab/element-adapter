@@ -1,9 +1,9 @@
 package com.elveum.elementadapter.dsl
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.elveum.elementadapter.ElementListAdapter
 import com.elveum.elementadapter.delegate.AdapterDelegate
 
 class BindingHolder(
@@ -12,7 +12,7 @@ class BindingHolder(
 
 internal class MultiAdapter<T : Any>(
     private val adapterDelegate: AdapterDelegate<T>
-) : ListAdapter<T, BindingHolder>(adapterDelegate.itemCallback()) {
+) : ElementListAdapter<T>(adapterDelegate.itemCallback()) {
 
     override fun getItemViewType(position: Int): Int {
         return adapterDelegate.getItemViewType(getItem(position))
@@ -27,7 +27,7 @@ internal class MultiAdapter<T : Any>(
         position: Int,
         payloads: MutableList<Any>
     ) {
-        adapterDelegate.onBindViewHolder(holder, getItem(position), payloads)
+        adapterDelegate.onBindViewHolder(holder, position, getItem(position), payloads)
     }
 
     override fun onBindViewHolder(holder: BindingHolder, position: Int) {
