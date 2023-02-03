@@ -314,13 +314,16 @@ Usage example:
    class PagingDataAdapterBridge<T : Any>(
        private val delegate: AdapterDelegate<T>
    ) : PagingDataAdapter<T, BindingHolder>(
-       delegate.itemCallback()
-   ){
+       delegate.noIndexItemCallback()
+   ) {
 
-       override fun onBindViewHolder(holder: BindingHolder, position: Int, payloads: List<Any>) {
+       override fun onBindViewHolder(holder: BindingHolder, position: Int, payloads: MutableList<Any>) {
            // please note, NULL values are not supported!
            val item = getItem(position) ?: return
-           delegate.onBindViewHolder(holder, item, payloads)
+           delegate.onBindViewHolder(holder, position, item, payloads)
+       }
+
+       override fun onBindViewHolder(holder: BindingHolder, position: Int) {
        }
 
        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingHolder {
@@ -394,7 +397,7 @@ Usage example:
   ```
   dependencies {
       ...
-      implementation 'com.elveum:element-adapter:0.4'
+      implementation 'com.elveum:element-adapter:0.5.1'
   }
   ```
 

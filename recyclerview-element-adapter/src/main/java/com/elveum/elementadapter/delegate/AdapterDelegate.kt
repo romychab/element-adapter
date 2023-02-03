@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.elveum.elementadapter.R
@@ -18,6 +19,12 @@ interface AdapterDelegate<T : Any> {
      * adapter.
      */
     fun itemCallback(): DiffUtil.ItemCallback<ElementWithIndex<T>>
+
+    /**
+     * Use this item callback instead of [itemCallback] if you don't want to
+     * support index() method.
+     */
+    fun noIndexItemCallback(): DiffUtil.ItemCallback<T>
 
     /**
      * Call this method from [RecyclerView.Adapter.getItemViewType]
@@ -43,6 +50,10 @@ internal class AdapterDelegateImpl<T : Any>(
 
     override fun itemCallback(): DiffUtil.ItemCallback<ElementWithIndex<T>> {
         return itemCallback
+    }
+
+    override fun noIndexItemCallback(): DiffUtil.ItemCallback<T> {
+        return itemWithoutIndexCallback
     }
 
     override fun getItemViewType(item: T): Int {
@@ -78,6 +89,20 @@ internal class AdapterDelegateImpl<T : Any>(
         concreteTypeScope.currentIndex = position
         concreteTypeScope.bindBlock?.invoke(holder.binding, item, payloads)
         concreteTypeScope.currentIndex = null
+    }
+
+    private val itemWithoutIndexCallback = object : ItemCallback<T>() {
+        override fun areItemsTheSame(oldItem: T, newItem: T): Boolean {
+            val oldIndexItem = ElementWithIndex(-1, oldItem)
+            val newIndexItem = ElementWithIndex(-1, newItem)
+            return itemCallback.areItemsTheSame(oldIndexItem, newIndexItem)
+        }
+
+        override fun areContentsTheSame(oldItem: T, newItem: T): Boolean {
+            val oldIndexItem = ElementWithIndex(-1, oldItem)
+            val newIndexItem = ElementWithIndex(-1, newItem)
+            return itemCallback.areContentsTheSame(oldIndexItem, newIndexItem)
+        }
     }
 
 }
