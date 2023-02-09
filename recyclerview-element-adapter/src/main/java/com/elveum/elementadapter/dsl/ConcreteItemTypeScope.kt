@@ -78,23 +78,12 @@ interface ConcreteItemTypeScope<T : Any, B : ViewBinding> {
 }
 
 internal class ConcreteItemTypeScopeImpl<T : Any, B : ViewBinding>(
+    override var areContentsSame: CompareItemCallback<T>,
+    override var areItemsSame: CompareItemCallback<T>,
+    override var changePayload: ChangePayloadCallback<T>,
     val bindingCreator: (inflater: LayoutInflater, parent: ViewGroup) -> B,
     val predicate: (T) -> Boolean
 ) : ConcreteItemTypeScope<T, B> {
-
-    private val defaultCompareItemsSameCallback: CompareItemCallback<T> =
-        { oldItem, newItem -> oldItem == newItem }
-
-    private val defaultCompareContentsCallback: CompareItemCallback<T> =
-        { oldItem, newItem -> oldItem == newItem }
-
-    private val defaultChangePayloadCallback: ChangePayloadCallback<T> =
-        { _, _ -> null }
-
-
-    override var areContentsSame: CompareItemCallback<T> = defaultCompareContentsCallback
-    override var areItemsSame: CompareItemCallback<T> = defaultCompareItemsSameCallback
-    override var changePayload: ChangePayloadCallback<T> = defaultChangePayloadCallback
 
     var bindBlock: (B.(item: T, payloads: List<Any>) -> Unit)? = null
     var listenersBlock: (B.() -> Unit)? = null

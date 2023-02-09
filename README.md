@@ -397,11 +397,21 @@ Usage example:
   ```
   dependencies {
       ...
-      implementation 'com.elveum:element-adapter:0.5.1'
+      implementation 'com.elveum:element-adapter:0.6'
   }
   ```
 
 ## Changelog
+
+### v0.6
+
+- Upgraded gradle plugin and dependencies
+- Changed target SDK to 33
+- Now you can specify `defaultAreItemsSame`, `defaultAreContentsSame` and `defaultChangePayload` callbacks
+  directly in the `adapter { ... }` block. They will be used as default callbacks for
+  all `addBinding { ... }` sub-blocks.
+- Default implementation of `areItemsSame` now compares items by reference
+  (e.g. `oldItem === newItem` instead of `oldItem == newItem`)
 
 ### v0.5
 
@@ -413,7 +423,6 @@ Usage example:
   `areItemsSame { ... }` and `changePayload { ... }` blocks. For these blocks
   you should call `index()` with arg because there is a need to specify for
   which item (`oldItem` or `newItem`) you want to get an index.
-
 
 ### v0.4
 
