@@ -18,6 +18,30 @@ __Features:__
 
 ![cats-screenshot](docs/screenshot.png)
 
+## Installation
+
+- Add [View Binding](https://developer.android.com/topic/libraries/view-binding) to
+  your `build.gradle` file:
+
+  ```
+  android {
+      ...
+      buildFeatures {
+          viewBinding true
+      }
+      ...
+  }
+  ```
+
+- Add the library to the `dependencies` section of your `build.gradle` script:
+
+  ```
+  dependencies {
+      ...
+      implementation 'com.elveum:element-adapter:0.7'
+  }
+  ```
+
 ## Usage example
 
 This library adds a couple of methods for easier implementation of `ListAdapter`. It relies on [View Binding](https://developer.android.com/topic/libraries/view-binding) so you don't need to create view holders.
@@ -377,31 +401,11 @@ Usage example:
 
    ```
 
-## Installation
-
-- Add [View Binding](https://developer.android.com/topic/libraries/view-binding) to
-  your `build.gradle` file:
-
-  ```
-  android {
-      ...
-      buildFeatures {
-          viewBinding true
-      }
-      ...
-  }
-  ```
-
-- Add the library to the `dependencies` section of your `build.gradle` script:
-
-  ```
-  dependencies {
-      ...
-      implementation 'com.elveum:element-adapter:0.6'
-  }
-  ```
-
 ## Changelog
+
+### v0.7
+
+- Updated plugins, targetSdk and libraries
 
 ### v0.6
 

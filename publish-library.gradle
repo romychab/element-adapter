@@ -32,8 +32,6 @@ afterEvaluate {
                     from components.java
                 }
 
-                artifact androidSourcesJar
-
                 pom {
                     name = PUBLISH_ARTIFACT_ID
                     description = 'Another one elementary and easy-to-use adapter for RecyclerView'

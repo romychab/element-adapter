@@ -1,23 +1,15 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-android'
-    id 'maven-publish'
-    id 'signing'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.dokka'
 }
-
-ext {
-    PUBLISH_GROUP_ID = 'com.elveum'
-    PUBLISH_VERSION = '0.6'
-    PUBLISH_ARTIFACT_ID = 'element-adapter'
-}
-
-apply from: "${rootProject.projectDir}/publish-library.gradle"
 
 android {
-    compileSdk 33
+    compileSdk 35
+    namespace "com.elveum.elementadapter"
     defaultConfig {
         minSdk 21
-        targetSdk 33
+        targetSdk 35
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -37,9 +29,27 @@ android {
     buildFeatures {
         viewBinding true
     }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
 
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
-    compileOnly 'androidx.recyclerview:recyclerview:1.2.1'
+    compileOnly 'androidx.recyclerview:recyclerview:1.3.2'
 }
+
+ext {
+    PUBLISH_GROUP_ID = 'com.elveum'
+    PUBLISH_VERSION = '0.7'
+    PUBLISH_ARTIFACT_ID = 'element-adapter'
+    PUBLISH_DESCRIPTION = "Another one easy-to-use adapter for RecyclerView"
+}
+
+apply from: "${rootProject.projectDir}/publish-library.gradle"
